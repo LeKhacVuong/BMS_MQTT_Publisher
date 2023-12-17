@@ -1,0 +1,14 @@
+# ninja log v5
+42	48	1702798604097442771	libMyLibrary.a	e7b22cfdfa6abfb5
+0	22	1702819738057000873	build.ninja	51e1f1a119ed657e
+1	39	1702798604089443569	CMakeFiles/MyLibrary.dir/host/sm_host.c.o	c25d5a344856389b
+1	31	1702798604081444368	CMakeFiles/MyLibrary.dir/utils/CRC.c.o	4101344e9faad8cc
+1	375	1702818430452354085	CMakeFiles/mqtt_slave.dir/main.cpp.o	73038069f2ba02a0
+375	436	1702818430512354522	mqtt_slave	9f296a17fbf91be1
+1	42	1702798604093443170	CMakeFiles/MyLibrary.dir/utils/linux/linux_serial.c.o	76bd4694c29c51eb
+1	35	1702819740956977795	CMakeFiles/MyLibrary.dir/utils/linux/linux_serial.c.o	f8b6671f0b39ce06
+1	38	1702819740960977764	CMakeFiles/MyLibrary.dir/utils/CRC.c.o	eeda2472e411b8b5
+1	40	1702819740960977764	CMakeFiles/MyLibrary.dir/host/sm_host.c.o	e3d16a88b45406d1
+40	46	1702819740968977700	libMyLibrary.a	e7b22cfdfa6abfb5
+1	470	1702819741388974406	CMakeFiles/mqtt_slave.dir/main.cpp.o	78ab15cd7d1b6cf9
+470	539	1702819741460973841	mqtt_slave	9f296a17fbf91be1
