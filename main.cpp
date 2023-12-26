@@ -12,6 +12,8 @@
 #include <chrono>
 
 
+
+
 using namespace std;
 
 #define M_MQTT_HOST_ADDR  "localhost"
@@ -21,6 +23,15 @@ using namespace std;
 #define M_MQTT_PORT        1883
 
 #define M_HOST_PORT       "/dev/ttyUSB0"
+
+#define VOL_CMD 'U'
+#define CUR_CMD 'I'
+#define COS_CMD 'A'
+#define FEQ_CMD 'F'
+#define ENE_CMD 'W'
+#define Q_CMD   'Q'
+#define P_CMD   'P'
+
 int32_t g_fd;
 struct mosquitto *m_mosq;
 char * now_time;
@@ -42,6 +53,19 @@ void on_publish(struct mosquitto *_mosq, void *_obj, int _mid)
 
 void rev_data_poll() {
     uint8_t packet[1024] = {0,};
+
+    while(1){
+        char payload[50] ;
+        float current_level = 5;
+        printf("Send mqtt: Current level: %1.1f\n",current_level);
+        sprintf(payload,"Current level: %1.1f\n",current_level);
+        int8_t rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
+        if(rc != MOSQ_ERR_SUCCESS){
+            printf("Error publishing.\n");
+        }
+        sleep(3);
+    }
+
     while (true) {
         int ret = serial_recv_bytes(g_fd,packet,1024);
         if(ret > 0){
@@ -49,7 +73,6 @@ void rev_data_poll() {
             if(packet[1] == 'C'){
                 char payload[50] ;
                 float current_level = (float)packet[2]/10;
-
                 printf("Send mqtt: Current level: %1.1f\n",current_level);
                 sprintf(payload,"Current level: %1.1f\n",current_level);
                 int8_t rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
@@ -69,7 +92,7 @@ int main() {
 
     if(g_fd < 0){
         printf("Could NOT open serial device file: %s\n", M_HOST_PORT);
-        return -1;
+//        return -1;
     }else{
         printf("Just open success serial device file: %s with fd = %d\n", M_HOST_PORT,g_fd);
     }
@@ -97,51 +120,9 @@ int main() {
         return 1;
     }
 
-    char payload[50] ;
-
-
     std::thread Receive_data_thread(rev_data_poll);
 
     while(1){
-
-//        for(int i = 0; i < 3; i++){
-//            sprintf(payload,"Current level: %d",1);
-//            rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
-//            if(rc != MOSQ_ERR_SUCCESS){
-//                printf("Error publishing.\n");
-//            }
-//            sleep(1);
-//        }
-//
-//        for(int i = 0; i < 3; i++){
-//            sprintf(payload,"Current level: %d",2);
-//            rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
-//            if(rc != MOSQ_ERR_SUCCESS){
-//                printf("Error publishing.\n");
-//            }
-//            sleep(1);
-//        }
-//
-//        for(int i = 0; i < 3; i++){
-//            sprintf(payload,"Current level: %d",3);
-//            rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
-//            if(rc != MOSQ_ERR_SUCCESS){
-//                printf("Error publishing.\n");
-//            }
-//            sleep(1);
-//        }
-//
-//        for(int i = 0; i < 3; i++){
-//            sprintf(payload,"Current level: %d",4);
-//
-//
-//
-//            rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
-//            if(rc != MOSQ_ERR_SUCCESS){
-//                printf("Error publishing.\n");
-//            }
-//            sleep(1);
-//        }
 
     }
 
