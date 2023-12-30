@@ -20,10 +20,3 @@
 /home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/lib/cpp/CMakeFiles/install.dir
 /home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/lib/cpp/CMakeFiles/install/local.dir
 /home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/lib/cpp/CMakeFiles/install/strip.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/mosquitto.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/edit_cache.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/rebuild_cache.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/list_install_components.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/install.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/install/local.dir
-/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/src/CMakeFiles/install/strip.dir

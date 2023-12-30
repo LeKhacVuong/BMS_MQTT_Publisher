@@ -16,26 +16,37 @@
 
 using namespace std;
 
-#define M_MQTT_HOST_ADDR  "localhost"
-//#define M_MQTT_HOST_ADDR "broker.hivemq.com"
+//#define M_MQTT_HOST_ADDR  "localhost"
+#define M_MQTT_HOST_ADDR "broker.hivemq.com"
 #define M_MQTT_HOST_USER  "admin"
 #define M_MQTT_HOST_PASS  "admin13589"
 #define M_MQTT_PORT        1883
-
 #define M_HOST_PORT       "/dev/ttyUSB0"
+#define M_PUB_TOPIC       "hustBMS/group3/elevator/status"
+#define M_SUB_TOPIC_CTL   "hustBMS/group3/elevator/cmd"
+#define M_SUB_TOPIC_FIRE  "hustBMS/group3/fire/cmd"
 
-#define VOL_CMD 'U'
-#define CUR_CMD 'I'
-#define COS_CMD 'A'
-#define FEQ_CMD 'F'
-#define ENE_CMD 'W'
-#define Q_CMD   'Q'
-#define P_CMD   'P'
+
+#define LINUX_CMD_CURRENT_LEVEL 'C'
+
+#define LINUX_CMD_CHANGE_LEVEL  'L'
+
+#define LINUX_CMD_FIRE_LEVEL    'F'
+
 
 int32_t g_fd;
 struct mosquitto *m_mosq;
 char * now_time;
 uint8_t g_buff[100] = "TEST HOST";
+
+int32_t my_string_cmp(char* str1, char* str2, uint32_t len){
+    for(int i = 0; i < len; i++){
+        if(str1[i] != str2[i]){
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void on_connect(struct mosquitto *_mosq, void *_obj, int _reason_code)
 {
@@ -44,6 +55,23 @@ void on_connect(struct mosquitto *_mosq, void *_obj, int _reason_code)
         printf("Mqtt connect to sever fail. \n");
         mosquitto_disconnect(_mosq);
     }
+
+    int mid = 1;
+
+    int rc = mosquitto_subscribe(_mosq, NULL, M_SUB_TOPIC_FIRE, 1);
+    if(rc != MOSQ_ERR_SUCCESS){
+        fprintf(stderr, "Error subscribing: %s\n", mosquitto_strerror(rc));
+        mosquitto_disconnect(_mosq);
+    }
+
+    mid = 2;
+
+    rc = mosquitto_subscribe(_mosq, NULL, M_SUB_TOPIC_CTL, 1);
+    if(rc != MOSQ_ERR_SUCCESS){
+        fprintf(stderr, "Error subscribing: %s\n", mosquitto_strerror(rc));
+        mosquitto_disconnect(_mosq);
+    }
+
 }
 
 void on_publish(struct mosquitto *_mosq, void *_obj, int _mid)
@@ -53,35 +81,63 @@ void on_publish(struct mosquitto *_mosq, void *_obj, int _mid)
 
 void rev_data_poll() {
     uint8_t packet[1024] = {0,};
-
-    while(1){
-        char payload[50] ;
-        float current_level = 5;
-        printf("Send mqtt: Current level: %1.1f\n",current_level);
-        sprintf(payload,"Current level: %1.1f\n",current_level);
-        int8_t rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
-        if(rc != MOSQ_ERR_SUCCESS){
-            printf("Error publishing.\n");
-        }
-        sleep(3);
-    }
-
-    while (true) {
+    while (1) {
         int ret = serial_recv_bytes(g_fd,packet,1024);
         if(ret > 0){
-//            printf("Receive data with len: %d \ndata is %s\n", ret,packet);
-            if(packet[1] == 'C'){
+            if(packet[1] == LINUX_CMD_CURRENT_LEVEL){
                 char payload[50] ;
                 float current_level = (float)packet[2]/10;
-                printf("Send mqtt: Current level: %1.1f\n",current_level);
                 sprintf(payload,"Current level: %1.1f\n",current_level);
-                int8_t rc = mosquitto_publish(m_mosq, NULL, "group3/elevator", strlen(payload), payload, 2, false);
+                int8_t rc = mosquitto_publish(m_mosq, NULL, M_PUB_TOPIC, strlen(payload), payload, 2, false);
                 if(rc != MOSQ_ERR_SUCCESS){
                     printf("Error publishing.\n");
                 }
             }
         }
     }
+}
+
+void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos)
+{
+    int i;
+    bool have_subscription = false;
+
+    for(i=0; i < qos_count; i++){
+        printf("on_subscribe: %d :granted qos = %d\n", i, granted_qos[i]);
+        if(granted_qos[i] <= 2){
+            have_subscription = true;
+        }
+    }
+
+}
+
+void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg)
+{
+
+    uint8_t cmd = *((uint8_t*)msg->payload) - '0';
+
+
+    if(!my_string_cmp((char *)msg->topic,(char*)M_SUB_TOPIC_FIRE, strlen(M_SUB_TOPIC_FIRE)-1)){
+        printf("fire!!!!\n");
+        uint8_t buff_tx[32] ={0,};
+        buff_tx[0] = '*';
+        buff_tx[1] = LINUX_CMD_FIRE_LEVEL;
+        buff_tx[2] = cmd;
+        buff_tx[3] = ';';
+        serial_send_bytes(g_fd,buff_tx,4);
+
+    }
+
+    if(!my_string_cmp((char *)msg->topic,(char*)M_SUB_TOPIC_CTL, strlen(M_SUB_TOPIC_CTL)-1)){
+        printf("change elevator level to level %d!!!!\n",cmd);
+        uint8_t buff_tx[32] ={0,};
+        buff_tx[0] = '*';
+        buff_tx[1] = LINUX_CMD_CHANGE_LEVEL;
+        buff_tx[2] = cmd;
+        buff_tx[3] = ';';
+        serial_send_bytes(g_fd,buff_tx,4);
+    }
+
 }
 
 int main() {
@@ -106,6 +162,9 @@ int main() {
     }
     mosquitto_connect_callback_set(m_mosq, on_connect);
     mosquitto_publish_callback_set(m_mosq, on_publish);
+    mosquitto_subscribe_callback_set(m_mosq, on_subscribe);
+    mosquitto_message_callback_set(m_mosq, on_message);
+
     rc = mosquitto_connect(m_mosq, M_MQTT_HOST_ADDR, M_MQTT_PORT, 600);
     if(rc != MOSQ_ERR_SUCCESS){
         mosquitto_destroy(m_mosq);

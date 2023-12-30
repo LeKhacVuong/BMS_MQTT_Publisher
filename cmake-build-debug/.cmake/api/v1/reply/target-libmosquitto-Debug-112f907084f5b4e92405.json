@@ -49,13 +49,13 @@
 			{
 				"command" : 3,
 				"file" : 1,
-				"line" : 6,
+				"line" : 7,
 				"parent" : 4
 			},
 			{
 				"command" : 3,
 				"file" : 1,
-				"line" : 9,
+				"line" : 10,
 				"parent" : 4
 			},
 			{
@@ -72,7 +72,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -fPIC -fdiagnostics-color=always"
+					"fragment" : "-g -std=gnu99 -fPIC -fdiagnostics-color=always"
 				}
 			],
 			"defines" : 
@@ -105,6 +105,14 @@
 				}
 			],
 			"language" : "C",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "99"
+			},
 			"sourceIndexes" : 
 			[
 				0,
