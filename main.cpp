@@ -143,7 +143,9 @@ int main() {
 
     int rc;
 
-
+    if (system("echo 0528 | sudo -S chmod 777 /dev/ttyUSB0") == -1) {
+        perror("error sudo\n");
+    }
 
     g_fd = serial_init(M_HOST_PORT,38400,false);
 
