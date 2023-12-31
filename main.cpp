@@ -198,7 +198,7 @@ int main() {
             printf("Please enter the level (1 to 4)!\n ");
             c = getchar();
             while (getc(stdin) != '\n');
-            if((c - '0' <= 0) || (c - '0' >= 4)){
+            if((c - '0' <= 0) || (c - '0' > 4)){
                 printf("Please choose the right elevator level!!!\n\n ");
                 continue;
             }
