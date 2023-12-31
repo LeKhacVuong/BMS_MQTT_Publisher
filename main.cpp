@@ -36,6 +36,9 @@ using namespace std;
 #define LINUX_CMD_FIRE_LEVEL    'F'
 
 float current_level;
+uint8_t is_fire = 0;
+char* fire_time;
+uint8_t is_fire_blocking = 0;
 
 int32_t g_fd;
 struct mosquitto *m_mosq;
@@ -118,7 +121,17 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
 {
     uint8_t cmd = *((uint8_t*)msg->payload) - '0';
     if(!my_string_cmp((char *)msg->topic,(char*)M_SUB_TOPIC_FIRE, strlen(M_SUB_TOPIC_FIRE)-1)){
-        printf("fire!!!!\n");
+        if(is_fire_blocking){
+            return;
+        }
+        printf("fire, stop elevator!!!!\n");
+        if(is_fire != cmd){
+            is_fire = cmd;
+            if(cmd == 1){
+                time_t now = time(0);
+                fire_time = ctime(&now);
+            }
+        }
         uint8_t buff_tx[32] ={0,};
         buff_tx[0] = '*';
         buff_tx[1] = LINUX_CMD_FIRE_LEVEL;
@@ -191,10 +204,59 @@ int main() {
         printf(" Please choose the command to control elevator:\n ");
         printf("Choose 1 to control level\n");
         printf(" Choose 2 to get current level\n");
-        printf(" Choose 3 to control fire emergency\n");
+        printf(" Choose 3 to set fire level for elevator\n");
+        printf(" Choose 4 to get elevator's fire status\n");
+        printf(" Choose 5 to get fire time\n");
+
         int c = getchar();
         while (getc(stdin) != '\n');
         if(c == '1'){
+            if(is_fire){
+                printf("Building on fire at level %1.1f, are you sure to control it now??? (1 = yes, 0 = no)\n",current_level);
+                c = getchar();
+                while (getc(stdin) != '\n');
+                if(c == '1'){
+                    printf("Enter the level from 1 -> 4, quickly!!!\n");
+                    c = getchar();
+                    while (getc(stdin) != '\n');
+                    if((c - '0' <= 0) || (c - '0' > 4)){
+                        printf("Wrong level!!!\n\n ");
+                        continue;
+                    }
+                    uint8_t buff_tx[32] ={0,};
+                    buff_tx[0] = '*';
+                    buff_tx[1] = LINUX_CMD_FIRE_LEVEL;
+                    buff_tx[2] = 0;
+                    buff_tx[3] = ';';
+                    serial_send_bytes(g_fd,buff_tx,4);
+
+                    sleep(1);
+
+                    printf("Change elevator level to level %d!!!!\n",c - '0');
+                    buff_tx[32] ={0,};
+                    buff_tx[0] = '*';
+                    buff_tx[1] = LINUX_CMD_CHANGE_LEVEL;
+                    buff_tx[2] = c - '0';
+                    buff_tx[3] = ';';
+                    serial_send_bytes(g_fd,buff_tx,4);
+
+                    while(current_level != (c - '0'));
+
+                    buff_tx[32] ={0,};
+                    buff_tx[0] = '*';
+                    buff_tx[1] = LINUX_CMD_FIRE_LEVEL;
+                    buff_tx[2] = 1;
+                    buff_tx[3] = ';';
+                    serial_send_bytes(g_fd,buff_tx,4);
+                    is_fire_blocking = 1;
+
+                }
+                if(c == '0'){
+                    printf("Please call 114 now!!!\n");
+                }
+                continue;
+            }
+
             printf("Please enter the level (1 to 4)!\n ");
             c = getchar();
             while (getc(stdin) != '\n');
@@ -209,9 +271,12 @@ int main() {
             buff_tx[2] = c - '0';
             buff_tx[3] = ';';
             serial_send_bytes(g_fd,buff_tx,4);
+
         }else if(c == '2'){
             printf("Current level is: %1.1f\n",current_level);
-
+            if(is_fire){
+                printf("Building on fire, please call 114 now!!!\n");
+            }
         }else if(c == '3'){
             printf("Please enter the fire status (1 is fire, 0 is not fire)!\n ");
             c = getchar();
@@ -225,8 +290,29 @@ int main() {
                 buff_tx[2] = c - '0';
                 buff_tx[3] = ';';
                 serial_send_bytes(g_fd,buff_tx,4);
+                is_fire = c - '0';
+                if(is_fire){
+                    time_t now = time(0);
+                    fire_time = ctime(&now);
+                    is_fire_blocking = 1;
+                }else{
+                    is_fire_blocking = 0;
+                }
             }else{
                 printf("Please choose the right fire level!!!\n\n ");
+            }
+
+        }else if(c == '4'){
+            if(is_fire){
+                printf("Building is on fire, please call 114 now!!!\n");
+            }else{
+                printf("Building not on fire, careful with fire!!!\n");
+            }
+        }else if(c == '5'){
+            if(fire_time){
+                printf("Building is start on fire at %s\n",fire_time);
+            }else{
+                printf("Building never been on fire\n");
             }
 
         }
