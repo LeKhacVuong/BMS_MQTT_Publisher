@@ -1,0 +1,128 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				},
+				{
+					"build" : "lib",
+					"childIndexes" : 
+					[
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lib-Debug-bab499cec8e0d60c2b6e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "lib",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "lib/cpp",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lib.cpp-Debug-5562ded8a1bd75655918.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "lib/cpp",
+					"targetIndexes" : 
+					[
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "BMS_MQTT_PUBLISHER",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "BMS_MQTT::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-BMS_MQTT-Debug-0645ff915d738985db8b.json",
+					"name" : "BMS_MQTT",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MyLibrary::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MyLibrary-Debug-a9428952ed8bf7d44617.json",
+					"name" : "MyLibrary",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "libmosquitto::@306ed2d68c6501e8728f",
+					"jsonFile" : "target-libmosquitto-Debug-112f907084f5b4e92405.json",
+					"name" : "libmosquitto",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mosquittopp::@2058d68873c3ad8b59af",
+					"jsonFile" : "target-mosquittopp-Debug-b6c5af9e2a4b3e02ba72.json",
+					"name" : "mosquittopp",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug",
+		"source" : "/home/lekhacvuong/Desktop/BMS_MQTT_Publisher"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

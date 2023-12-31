@@ -1,28 +1,34 @@
 cmake_minimum_required(VERSION 3.26)
-project(mqtt_slave)
-
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 99)
 
-#thêm đường dẫn đến thư viện link mosquitto
-link_directories(/usr/lib/x86_64-linux-gnu/libmosquitto.so)
+project(BMS_MQTT_PUBLISHER VERSION 1.1 LANGUAGES C CXX)
 
-# Thêm tên thư viện Mosquitto vào danh sách thư viện cần liên kết
-link_libraries(mosquitto)
+include_directories(include/)
 
 #thêm thư mục chứa thư viện
-include_directories(host utils)
+include_directories(host
+        utils)
 
 # Tạo thư viện tĩnh từ các tệp trong thư mục lib
 add_library(MyLibrary STATIC
         host/sm_cmd.h
         host/sm_host.c
         host/sm_host.h
-        utils/CRC.c
-        utils/CRC.h
+#        utils/CRC.c
+#        utils/CRC.h
         utils/linux/linux_serial.h
-        utils/linux/linux_serial.c)
+        utils/linux/linux_serial.c
+)
+
+message("Vuong dz")
+message("Vuong dz2")
+
+add_executable(BMS_MQTT main.cpp )
 
 
-# Thêm các nguồn và liên kết với thư viện tĩnh
-add_executable(mqtt_slave main.cpp)
-target_link_libraries(mqtt_slave PRIVATE MyLibrary pthread)
+target_link_libraries(BMS_MQTT PRIVATE MyLibrary pthread  libmosquitto)
+
+
+add_subdirectory(lib)
+#add_subdirectory(src)
