@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: aaaaaaa
+# Project: BMS_MQTT_PUBLISHER
 # Configurations: Debug
 # =============================================================================
 
@@ -80,37 +80,37 @@ build libMyLibrary.a: C_STATIC_LIBRARY_LINKER__MyLibrary_Debug CMakeFiles/MyLibr
   TARGET_PDB = MyLibrary.a.dbg
 
 # =============================================================================
-# Object build statements for EXECUTABLE target mqtt_slave
+# Object build statements for EXECUTABLE target BMS_MQTT
 
 
 #############################################
-# Order-only phony target for mqtt_slave
+# Order-only phony target for BMS_MQTT
 
-build cmake_object_order_depends_target_mqtt_slave: phony || cmake_object_order_depends_target_MyLibrary cmake_object_order_depends_target_libmosquitto
+build cmake_object_order_depends_target_BMS_MQTT: phony || cmake_object_order_depends_target_MyLibrary cmake_object_order_depends_target_libmosquitto
 
-build CMakeFiles/mqtt_slave.dir/main.cpp.o: CXX_COMPILER__mqtt_slave_unscanned_Debug /home/lekhacvuong/Desktop/BMS_MQTT_Publisher/main.cpp || cmake_object_order_depends_target_mqtt_slave
-  DEP_FILE = CMakeFiles/mqtt_slave.dir/main.cpp.o.d
+build CMakeFiles/BMS_MQTT.dir/main.cpp.o: CXX_COMPILER__BMS_MQTT_unscanned_Debug /home/lekhacvuong/Desktop/BMS_MQTT_Publisher/main.cpp || cmake_object_order_depends_target_BMS_MQTT
+  DEP_FILE = CMakeFiles/BMS_MQTT.dir/main.cpp.o.d
   FLAGS = -g -std=gnu++17 -fdiagnostics-color=always
   INCLUDES = -I/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/include -I/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/host -I/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/utils
-  OBJECT_DIR = CMakeFiles/mqtt_slave.dir
-  OBJECT_FILE_DIR = CMakeFiles/mqtt_slave.dir
+  OBJECT_DIR = CMakeFiles/BMS_MQTT.dir
+  OBJECT_FILE_DIR = CMakeFiles/BMS_MQTT.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target mqtt_slave
+# Link build statements for EXECUTABLE target BMS_MQTT
 
 
 #############################################
-# Link the executable mqtt_slave
+# Link the executable BMS_MQTT
 
-build mqtt_slave: CXX_EXECUTABLE_LINKER__mqtt_slave_Debug CMakeFiles/mqtt_slave.dir/main.cpp.o | libMyLibrary.a lib/liblibmosquitto.so || lib/liblibmosquitto.so libMyLibrary.a
+build BMS_MQTT: CXX_EXECUTABLE_LINKER__BMS_MQTT_Debug CMakeFiles/BMS_MQTT.dir/main.cpp.o | libMyLibrary.a lib/liblibmosquitto.so || lib/liblibmosquitto.so libMyLibrary.a
   FLAGS = -g
   LINK_LIBRARIES = -Wl,-rpath,/home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug/lib  libMyLibrary.a  -lpthread  lib/liblibmosquitto.so  -lrt
-  OBJECT_DIR = CMakeFiles/mqtt_slave.dir
+  OBJECT_DIR = CMakeFiles/BMS_MQTT.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = mqtt_slave
-  TARGET_PDB = mqtt_slave.dbg
+  TARGET_FILE = BMS_MQTT
+  TARGET_PDB = BMS_MQTT.dbg
 
 
 #############################################
@@ -746,7 +746,7 @@ build mosquittopp: phony lib/cpp/libmosquittopp.so
 #############################################
 # Folder: /home/lekhacvuong/Desktop/BMS_MQTT_Publisher/cmake-build-debug
 
-build all: phony libMyLibrary.a mqtt_slave lib/all
+build all: phony libMyLibrary.a BMS_MQTT lib/all
 
 # =============================================================================
 

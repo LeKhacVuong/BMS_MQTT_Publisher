@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 99)
 
-project(aaaaaaa VERSION 1.1 LANGUAGES C CXX)
+project(BMS_MQTT_PUBLISHER VERSION 1.1 LANGUAGES C CXX)
 
 include_directories(include/)
 
@@ -24,10 +24,10 @@ add_library(MyLibrary STATIC
 message("Vuong dz")
 message("Vuong dz2")
 
-add_executable(mqtt_slave main.cpp )
+add_executable(BMS_MQTT main.cpp )
 
 
-target_link_libraries(mqtt_slave PRIVATE MyLibrary pthread  libmosquitto)
+target_link_libraries(BMS_MQTT PRIVATE MyLibrary pthread  libmosquitto)
 
 
 add_subdirectory(lib)

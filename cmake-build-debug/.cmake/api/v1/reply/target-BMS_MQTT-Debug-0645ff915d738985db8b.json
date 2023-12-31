@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "mqtt_slave"
+			"path" : "BMS_MQTT"
 		}
 	],
 	"backtrace" : 1,
@@ -109,7 +109,7 @@
 			"id" : "libmosquitto::@306ed2d68c6501e8728f"
 		}
 	],
-	"id" : "mqtt_slave::@6890427a1f51a3e7e1df",
+	"id" : "BMS_MQTT::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -149,8 +149,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "mqtt_slave",
-	"nameOnDisk" : "mqtt_slave",
+	"name" : "BMS_MQTT",
+	"nameOnDisk" : "BMS_MQTT",
 	"paths" : 
 	{
 		"build" : ".",

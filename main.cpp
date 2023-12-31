@@ -10,8 +10,10 @@
 #include "fcntl.h"
 #include <thread>
 #include <chrono>
-
-
+#include <stdio.h>
+#include <sys/stat.h>
+#include <cstdio>
+#include <cstdlib>
 
 
 using namespace std;
@@ -33,6 +35,7 @@ using namespace std;
 
 #define LINUX_CMD_FIRE_LEVEL    'F'
 
+float current_level;
 
 int32_t g_fd;
 struct mosquitto *m_mosq;
@@ -86,7 +89,7 @@ void rev_data_poll() {
         if(ret > 0){
             if(packet[1] == LINUX_CMD_CURRENT_LEVEL){
                 char payload[50] ;
-                float current_level = (float)packet[2]/10;
+                current_level = (float)packet[2]/10;
                 sprintf(payload,"Current level: %1.1f\n",current_level);
                 int8_t rc = mosquitto_publish(m_mosq, NULL, M_PUB_TOPIC, strlen(payload), payload, 2, false);
                 if(rc != MOSQ_ERR_SUCCESS){
@@ -113,10 +116,7 @@ void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_count, con
 
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg)
 {
-
     uint8_t cmd = *((uint8_t*)msg->payload) - '0';
-
-
     if(!my_string_cmp((char *)msg->topic,(char*)M_SUB_TOPIC_FIRE, strlen(M_SUB_TOPIC_FIRE)-1)){
         printf("fire!!!!\n");
         uint8_t buff_tx[32] ={0,};
@@ -125,7 +125,6 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
         buff_tx[2] = cmd;
         buff_tx[3] = ';';
         serial_send_bytes(g_fd,buff_tx,4);
-
     }
 
     if(!my_string_cmp((char *)msg->topic,(char*)M_SUB_TOPIC_CTL, strlen(M_SUB_TOPIC_CTL)-1)){
@@ -144,11 +143,13 @@ int main() {
 
     int rc;
 
+
+
     g_fd = serial_init(M_HOST_PORT,38400,false);
 
     if(g_fd < 0){
         printf("Could NOT open serial device file: %s\n", M_HOST_PORT);
-//        return -1;
+        return -1;
     }else{
         printf("Just open success serial device file: %s with fd = %d\n", M_HOST_PORT,g_fd);
     }
@@ -181,7 +182,57 @@ int main() {
 
     std::thread Receive_data_thread(rev_data_poll);
 
+    sleep(2);
+
     while(1){
+        printf("\n/*************** Elevator Control *****************/\n");
+        printf(" Please choose the command to control elevator:\n ");
+        printf("Choose 1 to control level\n");
+        printf(" Choose 2 to get current level\n");
+        printf(" Choose 3 to control fire emergency\n");
+        int c = getchar();
+        while (getc(stdin) != '\n');
+        if(c == '1'){
+            printf("Please enter the level (1 to 4)!\n ");
+            c = getchar();
+            while (getc(stdin) != '\n');
+            if((c - '0' <= 0) || (c - '0' >= 4)){
+                printf("Please choose the right elevator level!!!\n\n ");
+                continue;
+            }
+            printf("Change elevator level to level %d!!!!\n",c - '0');
+            uint8_t buff_tx[32] ={0,};
+            buff_tx[0] = '*';
+            buff_tx[1] = LINUX_CMD_CHANGE_LEVEL;
+            buff_tx[2] = c - '0';
+            buff_tx[3] = ';';
+            serial_send_bytes(g_fd,buff_tx,4);
+        }else if(c == '2'){
+            printf("Current level is: %1.1f\n",current_level);
+
+        }else if(c == '3'){
+            printf("Please enter the fire status (1 is fire, 0 is not fire)!\n ");
+            c = getchar();
+            while (getc(stdin) != '\n');
+
+            if((c == '1') || (c == '0')){
+                printf("Change fire lever to %d", c - '0');
+                uint8_t buff_tx[32] ={0,};
+                buff_tx[0] = '*';
+                buff_tx[1] = LINUX_CMD_FIRE_LEVEL;
+                buff_tx[2] = c - '0';
+                buff_tx[3] = ';';
+                serial_send_bytes(g_fd,buff_tx,4);
+            }else{
+                printf("Please choose the right fire level!!!\n\n ");
+            }
+
+        }
+        else{
+            printf("Please choose the right command!!!\n\n ");
+        }
+
+
 
     }
 

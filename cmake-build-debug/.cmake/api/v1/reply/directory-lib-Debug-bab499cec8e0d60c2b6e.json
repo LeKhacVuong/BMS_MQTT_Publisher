@@ -7,7 +7,7 @@
 		],
 		"files" : 
 		[
-			"lib/cpp/CMakeLists.txt"
+			"lib/CMakeLists.txt"
 		],
 		"nodes" : 
 		[
@@ -17,7 +17,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 14,
+				"line" : 94,
 				"parent" : 0
 			}
 		]
@@ -30,16 +30,16 @@
 			"destination" : "lib",
 			"paths" : 
 			[
-				"lib/cpp/libmosquittopp.so"
+				"lib/liblibmosquitto.so"
 			],
-			"targetId" : "mosquittopp::@2058d68873c3ad8b59af",
+			"targetId" : "libmosquitto::@306ed2d68c6501e8728f",
 			"targetIndex" : 2,
 			"type" : "target"
 		}
 	],
 	"paths" : 
 	{
-		"build" : "lib/cpp",
-		"source" : "lib/cpp"
+		"build" : "lib",
+		"source" : "lib"
 	}
 }
